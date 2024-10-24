@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .operation {
+            margin-bottom: 20px;
+        }
+        input[type="number"] {
+            padding: 5px;
+            width: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Bank Operations</h1>
+
+<div class="operation">
+    <h2>Deposit Money</h2>
+    <input type="number" id="depositAmount" placeholder="Enter amount">
+    <button onclick="depositMoney()">Deposit</button>
+</div>
+
+<div class="operation">
+    <h2>Withdraw Money</h2>
+    <input type="number" id="withdrawAmount" placeholder="Enter amount">
+    <button onclick="withdrawMoney()">Withdraw</button>
+</div>
+
+<div class="operation">
+    <h2>Check Balance</h2>
+    <button onclick="checkBalance()">Check Balance</button>
+</div>
+
+<div class="operation">
+    <h2>Transaction History</h2>
+    <button onclick="viewTransactions()">View Transactions</button>
+</div>
+
+<div class="response" id="response"></div>
+
+<script>
+    function depositMoney() {
+        const amountInput = document.getElementById('depositAmount');
+        const amount = amountInput.value;
+
+        fetch('/deposit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount })
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayResponse(data);
+            if (data.success) { // Check if the transaction was successful
+                amountInput.value = ''; // Clear input on success
+            }
+        });
+    }
+
+    function withdrawMoney() {
+        const amountInput = document.getElementById('withdrawAmount');
+        const amount = amountInput.value;
+
+        fetch('/withdraw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amount })
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayResponse(data);
+            if (data.success) { // Check if the transaction was successful
+                amountInput.value = ''; // Clear input on success
+            }
+        });
+    }
+
+    function checkBalance() {
+        fetch('/balance')
+        .then(response => response.json())
+        .then(data => displayResponse(data));
+    }
+
+    function viewTransactions() {
+        fetch('/transactions')
+        .then(response => response.json())
+        .then(data => displayResponse(data));
+    }
+
+    function displayResponse(data) {
+        const responseDiv = document.getElementById('response');
+        responseDiv.innerHTML = JSON.stringify(data, null, 2);
+    }
+</script>
+
+</body>
+</html>
